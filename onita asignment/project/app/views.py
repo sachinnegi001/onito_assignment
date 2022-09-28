@@ -11,6 +11,9 @@ from app.serializers import RatingsSerializer
 from app.serializers import FileUploadSerializer
 import io, csv, pandas as pd
 
+
+
+#upload movies.csv file in the database by api------------------------------------
 class UploadFileViewtomovies(generics.CreateAPIView):
     serializer_class = FileUploadSerializer
     
@@ -30,7 +33,9 @@ class UploadFileViewtomovies(generics.CreateAPIView):
             new_file.save()
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)
-
+    
+    
+#upload ratings.csv by api in database----------------------------------
 class UploadFileViewtoratings(generics.CreateAPIView):
     serializer_class = FileUploadSerializer
     
@@ -52,6 +57,8 @@ class UploadFileViewtoratings(generics.CreateAPIView):
 
 
 
+    
+#get movies ----------------------------------------
 class movielist (APIView):
     def get(self,request):
         moviess=movies.objects.all().order_by("-runtimeMinutes")[:10]  #make descending order of our runtime minute field and take first 10 records
@@ -59,13 +66,21 @@ class movielist (APIView):
        
         return Response(serializer.data)
 
+    
+    
+    
+  
+ #get ratinga ----------------------------------------
 class ratinglist (APIView):
-
     def get(self,request):
         Ratings=ratings.objects.all().order_by('-averageRating').filter(averageRating__gte=6.0)
         serializer=RatingsSerializer(Ratings,many=True)
         return Response(serializer.data)
 
+    
+    
+    
+#post request to add new movie-----------------------------
 class Movielist (APIView):
     def post(self,request):
         serializer=MoviesSerializer(data=request.data)
